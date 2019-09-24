@@ -99,6 +99,10 @@ func bitterEnd<T: Comparable>(_ a: [T]) -> [T] {
 
 }
 
+/*
+partitionLomuto() takes in an array of Comparable objects, as well as two ints
+which define the start and end of the 
+*/
 func partitionLomuto<T: Comparable>(_ a: inout [T], low: Int, high: Int) -> Int {
   let pivot = a[high]
 
