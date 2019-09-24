@@ -101,7 +101,7 @@ func bitterEnd<T: Comparable>(_ a: [T]) -> [T] {
 
 /*
 partitionLomuto() takes in an array of Comparable objects, as well as two ints
-which define the start and end of the 
+for the indicies, returns the sorted array
 */
 func partitionLomuto<T: Comparable>(_ a: inout [T], low: Int, high: Int) -> Int {
   let pivot = a[high]
@@ -126,6 +126,10 @@ func quicksortLomuto<T: Comparable>(_ a: inout [T], low: Int, high: Int) {
   }
 }
 
+/*
+partitionHoare() takes in an array of Comparable objects, as well as two ints
+for the indicies, returns the sorted array
+*/
 func partitionHoare<T: Comparable>(_ a: inout [T], low: Int, high: Int) -> Int {
   let pivot = a[low]
   var i = low - 1
@@ -152,6 +156,11 @@ func quicksortHoare<T: Comparable>(_ a: inout [T], low: Int, high: Int) {
   }
 }
 
+/*
+timeThatSort() is my timing method which uses a switch statement to determine
+which sort to perform, it also is what creates the array and shuffles it before
+the sort, this method prints out the timing report
+*/
 func timeThatSort(f: String) {
 
   var toSort = Array(1...1000000).shuffled()
@@ -177,7 +186,7 @@ func timeThatSort(f: String) {
   mach_timebase_info(&timeBaseInfo)
   let nanoS = Double(diff) * Double(timeBaseInfo.numer) / Double(timeBaseInfo.denom)
 
-  print("\(f) completed the sort of 10,000 elements in \(nanoS * 0.000000001) seconds")
+  print("\(f) completed the sort of 1,000,000 elements in \(nanoS * 0.000000001) seconds")
 
 }
 
