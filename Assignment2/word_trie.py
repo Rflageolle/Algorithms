@@ -79,23 +79,21 @@ class Trie:
         while (len(key) > index):
             node = ord(key[index].lower()) - ord('a')
             if (current.children[node] == None):
-                return False
+                return [current, "%s does not exist in the trie" % key]
             else:
                 print(chr(node + ord('a')))
                 current = current.children[node]
                 index = index + 1
         if (current.isEndOfWord):
-            return True
+            return [current, "%s exitst in the trie" % key]
         else:
-            return "%s exists in the trie however it does not yet terminate" % key
+            return [current, "%s exists in the trie however it does not yet terminate" % key]
 
+class Interaction:
 
-    def guess(self, chars):
-        options = []
+    def __init__(self):
+        self.trie = create_trie('words.txt')
 
-        index = 0
-        while (len(chars) > index):
-            index = index + 1
 
 '''
     methods: main - is used to create the trie object as well as reading in the
@@ -114,13 +112,14 @@ def create_trie(file):
     print("successfully read in %d words from %s" % (x, file))
     return t
 
-def main():
+def __main__():
     trie = create_trie('words.txt')
 
-    print(trie.search('aaa'))
-    print(trie.search('abdominohysterectomy'))
-    print(trie.search('fucky'))
-    print(trie.search('subantiq'))
+    print(trie.search('aaa')[1])
+    print(trie.search('abdominohysterectomy')[1])
+    print(trie.search('fucky')[1])
+    print(trie.search('subantiq')[1])
+    #print(trie.DFS('subantiq'))
 
 #remove_dups()
-main()
+__main__()
