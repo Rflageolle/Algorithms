@@ -6,93 +6,75 @@
         https://www.geeksforgeeks.org/trie-insert-and-search/
 '''
 
-'''
-    class TrieNode - a node of the trie
+import sys, select, tty, termios
 
-    methods: __init__ - initializes a new node with an array of 26 None types
-                        which acts as the children and will optionally be filled
-                        as words are read in.
-'''
-class TrieNode:
 
-    def __init__(self):
-        self.children = [None]*26
+class NonBlockingConsole(object):
+    '''
+    from: https://stackoverflow.com/questions/16547486/read-raw-input-from-keyboard-in-python
+    '''
+    def __enter__(self):
+        self.old_settings = termios.tcgetattr(sys.stdin)
+        tty.setcbreak(sys.stdin.fileno())
+        return self
 
-        self.isEndOfWord = False
+    def __exit__(self, type, value, traceback):
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, self.old_settings)
 
-'''
-    class Trie - the data structure used to save the suggested words
+    def get_data(self):
+        try:
+            if select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], []):
+                return sys.stdin.read(1)
+        except:
+            return '[CTRL-C]'
+        return False
 
-    methods: __init__ - initializes a trie object with an empty root node
-
-             getNode - returns the current node
-
-             _charToIndex - returns the index of a given letter. For Example: if
-                            it is given an 'a' it will return 0
-
-            insert - takes in a string and will run through the key and insert it
-                     into the trie setting the leaf node's (of that word)
-                     isEndOfWord property to True
-
-            search - takes in a string and will run through the key and check if
-                     it exists in the trie, returning true only if the last node
-                     visited has a True for the isEndOfWord property
-
-            getNextFullWord - will take in a character and return a word which
-                              can be completed form that point, or None if there
-                              is no word that can be created
-
-            guess - will take in a character and return the next 10 words which
-                    can be created, or None if there is no word that can be
-                    created
-
-'''
 class Trie:
 
-    def __init__(self):
-        self.root = self.getNode()
+    def __init__(self, v='', isEndOfWord=False):
+        self.children = dict()
+        self.value = v
+        self.isEndOfWord = isEndOfWord
 
-    def getNode(self):
-        return TrieNode()
+    def getNode(self, w):
+        curr = self
+        for v in w:
+            curr = curr.children.get(v, None)
+            if curr is None:
+                break
+        return curr
 
-    def _charToIndex(self, ch):
-        return ord(ch) - ord('a')
+    def addNode(self, v, isword):
+        self.children[v] = Trie(self.value + v, isword)
+
 
     def insert(self, key):
-        start = self.root
-        length = len(key)
+        curr = self
+        l = len(key)
+        for idx, c in enumerate(key):
+            next = curr.children.get(c, None)
+            if next is None:
+                isEndOfWord = idx == l-1
+                curr.addNode(c, isEndOfWord)
+                next = curr.children[c]
+            curr = next
 
-        for level in range(length):
-            index = self._charToIndex(key[level])
-            if not start.children[index]:
-                start.children[index] = self.getNode()
-            start = start.children[index]
 
-        start.isEndOfWord = True
+    def starts_with(self, key, amount=None):
+        start = self.getNode(key)
+        if start is None:
+            return []
+        words = []
+        if start.isEndOfWord:
+            words.append(start.value)
+        for c, child in sorted(start.children.items(), key=lambda kv: kv[0]):
+            words += child.starts_with('', amount)
 
-    def getNextFullWord(self):
-        return stuff
+        if amount is None:
+            return words
 
-    def search(self, key):
-        current = self.root
-        index = 0
-        while (len(key) > index):
-            node = ord(key[index].lower()) - ord('a')
-            if (current.children[node] == None):
-                return [current, "%s does not exist in the trie" % key]
-            else:
-                print(chr(node + ord('a')))
-                current = current.children[node]
-                index = index + 1
-        if (current.isEndOfWord):
-            return [current, "%s exitst in the trie" % key]
-        else:
-            return [current, "%s exists in the trie however it does not yet terminate" % key]
+        return words[:amount]
 
-class Interaction:
-
-    def __init__(self):
-        self.trie = create_trie('words.txt')
 
 
 '''
@@ -106,20 +88,53 @@ def create_trie(file):
     x = 0
     with open(file) as f:
         for key in f:
-            t.insert(key.lower().rstrip('\n'))
+            t.insert(key.lower().rstrip('\n '))
             x = x + 1
 
     print("successfully read in %d words from %s" % (x, file))
     return t
 
 def __main__():
-    trie = create_trie('words.txt')
+    print("Loading...")
+    t = create_trie('words.txt')
+    word = ''
+    words = ''
 
-    print(trie.search('aaa')[1])
-    print(trie.search('abdominohysterectomy')[1])
-    print(trie.search('fucky')[1])
-    print(trie.search('subantiq')[1])
-    #print(trie.DFS('subantiq'))
+    print("type to start.",
+          "[ESC] or [CTRL-C] to quit.",
+          "Backspace works.",
+          "Enter to new word",
+          sep="\n")
+
+    with NonBlockingConsole() as nbc:
+        while 1:
+            c = nbc.get_data()
+            if c:
+                if c == '\x1b': # x1b is ESC
+                    break
+                elif c == '\x7f': # backspace
+                    l = len(words)
+                    word = word[:-1]
+                    words = word + ": " + " ".join(t.starts_with(word, 10))
+                    words += " " * (l - len(words))
+                    sys.stdout.write('\b' * l + words)
+                    sys.stdout.flush()
+                elif c == '[CTRL-C]':
+                    word = ''
+                    sys.stdout.write('\n')
+                    break
+                elif c == '\n': # it's RETURN
+                    sys.stdout.write('\n')
+                    # parse data here
+                    word = ''
+                else:
+                    l = len(words)
+                    word += (c)
+                    words = word + ": " + " ".join(t.starts_with(word, 10))
+                    words += " " * (l - len(words))
+                    sys.stdout.write('\b' * l + words)
+                    sys.stdout.flush()
+
 
 #remove_dups()
 __main__()
