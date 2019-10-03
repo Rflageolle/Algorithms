@@ -104,7 +104,7 @@ def __main__():
           "[ESC] or [CTRL-C] to quit.",
           "Backspace works.",
           "Enter to new word",
-          sep="\n")
+          "\n")
 
     with NonBlockingConsole() as nbc:
         while 1:
