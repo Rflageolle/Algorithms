@@ -4,6 +4,8 @@
         and returns the next 10 possible words from the input given
     Resources used: Learned about the Trie from:
         https://www.geeksforgeeks.org/trie-insert-and-search/
+    TODO: Change the way users interact with the program to return suggested
+        words to a new line.
 """
 import sys, select, tty, termios
 
