@@ -58,14 +58,26 @@ class PrimeChecker {
   }
 
   def simVariableAccuracy(): Unit = {
-    val acc = List(10, 100, 1000, 10000)
+    val acc = List(10, 100, 1000, 10000, 100000)
     val n = Random.nextInt(10000)
     acc.foreach(k => {
       val pr = if (isPrime(n, randomList(k, n))) "" else " not"
       println(s"The number: $n, is$pr prime.  Tested against $k numbers.")
     })
   }
+
+  def simOnComposites(): Unit = {
+    val acc = List(10, 100, 1000, 10000, 100000)
+    val randComps = randomComposites(25, 250000)
+    randComps.foreach( rc => {
+      acc.foreach( a => {
+        val pr = if (isPrime(rc, randomList(rc, a))) "was identified as prime" else "was identified as composite"
+        println(s"The composite number: $rc, $pr.  Tested against $a numbers.")
+      })
+    })
+  }
 }
 
 val pc = new PrimeChecker
 pc.simVariableAccuracy
+pc.simOnComposites
