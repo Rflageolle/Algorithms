@@ -15,6 +15,18 @@ class Board(val n: Int) {
     this.matrix = Array.ofDim[Boolean](this.n, this.n)
   }
 
+  def clearColumn(row: Int, col: Int): Unit = {
+    if (onBoard(row, col)){
+      if (this.matrix(row)(col)) {
+        this.matrix(row)(col) = false
+        println(s"removed queen from column ${col}")
+      }
+      else {
+        clearColumn(row + 1, col)
+      }
+    }
+  }
+
   def printBoard(): Unit = {
     for ( row <- 0 to (this.n - 1) ) {
       var str = ""
@@ -103,19 +115,16 @@ class Board(val n: Int) {
     return Random.nextInt(this.n)
   }
 
-  def randomLegalQueen(col: Int): Unit = {
-    var row = randRow
-
-    while (!legalMove(row, col)) {
-      row = randRow
+  def placeRandK(k: Int, safe: Boolean): Unit = {
+    for (col <- 0 to (k - 1)) {
+      randomLegalQueen(col, safe)
     }
-
-    placeQueen(row, col)
   }
 
-  def placeRandK(k: Int): Unit = {
+  def safePlaceRandK(k: Int): Unit = {
+    var attempts = 0
     for (col <- 0 to (k - 1)) {
-      randomLegalQueen(col)
+
     }
   }
 
@@ -123,6 +132,23 @@ class Board(val n: Int) {
 
 class Tracker(val n: Int) {
   var b = new Board(n)
+
+  def randomLegalQueen(col: Int, safe: Boolean): Boolean = {
+    var row = randRow
+    var attempts = 0
+
+    while (!legalMove(row, col) && attempts < 100000) {
+      row = randRow
+      attempts = attempts + 1
+    }
+    if (attempts == 100000 && safe) {
+      println(s"Random placement caused circular loop, backtracking took over at col ${col}")
+      return false
+    } else {
+      this.placeQueen(row, col)
+      return true
+    }
+  }
 
   def backtracking(col: Int): Boolean = {
     if (col == (this.n)) {
@@ -207,6 +233,20 @@ class Tracker(val n: Int) {
     val avg = list(bestK)(1) / list(bestK)(0)
 
     println(s"For ${trials} trials: The best value of K is ${bestK} with an average runTime of ${avg} seconds")
+  }
+
+  def unSolveable(col: Int): Unit = {
+    if (!backtracking(col)) {
+      this.b.clearColumn()
+      this.unSolveable(col - 1)
+    } else {
+      this.b.printBoard
+    }
+  }
+
+  def neverHang(k: Int): Unit = {
+    this.b.placeRandK(k)
+
   }
 }
 

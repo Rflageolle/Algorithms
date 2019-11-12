@@ -18,10 +18,37 @@ def darts(f: (Double) => Double, start: Int, stop: Int, maxHeight: Int, trials: 
   }
 
   val guess = ((stop - start) * maxHeight) * (in / trials.toDouble)
-  println(s"The estimated integral of f(x) = ${guess}")
+  println(s"Darts (after $trials trials):  The estimated integral of f(x) = $guess")
 
+}
+
+def mean(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit = {
+  var sum: Double = 0
+  for (_ <- 0 to trials) {
+    val x = (Random.nextDouble() * (stop - start)) + start
+    sum += f(x)
+  }
+
+  val guess = (sum / trials) * (stop - start)
+  println(s"Mean (after $trials trials):  The estimated integral of f(x) = $guess")
+}
+
+def trapezoid(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit = {
+  val h = (stop - start).toDouble / trials
+  var s = (f(start) + f(stop))
+
+  var trial = 0
+  while (trial < trials) {
+    s += 2 * f(start + trial * h)
+    trial += 1
+  }
+
+  val guess = ((h / 2) * s)
+  println(s"Trapezoid (after $trials trials):  The estimated integral of f(x) = $guess")
 }
 
 val f = (x: Double) => abs(((cos(3 * Pi * x)) + (sin(x)))+5)
 
 darts(f, 0, 10, 10, 100000)
+mean(f, 0, 10, 100000)
+trapezoid(f, 0, 10, 100000)
