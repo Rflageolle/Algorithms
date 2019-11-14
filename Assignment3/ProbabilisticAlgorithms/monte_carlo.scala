@@ -7,6 +7,8 @@
 import scala.util.Random
 import scala.math.{ pow, cos, sin, Pi, abs }
 
+
+
 def darts(f: (Double) => Double, start: Int, stop: Int, maxHeight: Int, trials: Int): Unit = {
   var in = 0
   for (_ <- 0 to trials) {
@@ -47,7 +49,7 @@ def trapezoid(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit =
   println(s"Trapezoid (after $trials trials):  The estimated integral of f(x) = $guess")
 }
 
-val f = (x: Double) => abs(((cos(3 * Pi * x)) + (sin(x)))+5)
+val f = (x: Double) => abs(((cos(3 * Pi * x)) + (4 * (sin(x))))+5)
 
 darts(f, 0, 10, 10, 100000)
 mean(f, 0, 10, 100000)

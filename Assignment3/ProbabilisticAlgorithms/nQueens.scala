@@ -127,25 +127,27 @@ class Solution(n: Int) {
       }
       this.fixRandomPlacements(col - 1)
     }
-    
+
   }
 
   def timer(k: Int): Long = {
+    newBoard()
     val start = System.currentTimeMillis
     nQueens(k)
     val complete = backtracking(k)
     val time = System.currentTimeMillis - start
 
-    if (complete) {
-      println(s"k = $k completed in $time milliseconds")
-    } else {
-      println(s"k = $k completed with no solution found in $time milliseconds")
-    }
+    // if (complete) {
+    //   println(s"k = $k completed in $time milliseconds")
+    // } else {
+    //   println(s"k = $k completed with no solution found in $time milliseconds")
+    // }
 
     return time
   }
 
   def runSimulation(trials: Int): Unit = {
+    var times = Array.ofDim(this.n)
     var fastest = 10000.toLong
     var bestK = 0
 
@@ -163,8 +165,26 @@ class Solution(n: Int) {
 
     println(s"After $trials trials: K = $bestK  completes the fastest in $fastest milliseconds")
   }
+
+
+
+  def simulation(k: Int, trials: Int): Unit = {
+    var times = new Array[Long](trials)
+
+    for (index <- 0 to (trials - 1)) {
+      times(index) = timer(k)
+    }
+    var total = 0.toLong
+    times.foreach(v => total += v)
+    val avg = total / trials
+
+    println(s"After $trials trials: k = $k takes on average $avg milliseconds")
+  }
+
 }
 
 val s = new Solution(8)
-
+// s.simulation(0, 10000)
+// s.simulation(1, 10000)
+// s.simulation(2, 10000)
 s.runSimulation(10)
