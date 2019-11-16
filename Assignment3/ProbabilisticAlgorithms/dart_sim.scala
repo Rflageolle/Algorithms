@@ -8,10 +8,15 @@
 import scala.util.Random
 import scala.math.{sqrt, exp}
 
+// object which represents a "dart's" location on the board
 case class Dart(x: Double, y: Double)
 
+/*
+  n is used to determine how many darts will be thrown in a session
+*/
 class DartSession(val n: Int) {
 
+  // return a randomly generated dart position with x and y between -1 and 1
   def throwDart(): Dart = {
     val random = new Random();
     val xbool = random.nextBoolean()
@@ -43,6 +48,7 @@ class DartSession(val n: Int) {
 
   def results(m: Int): Double = (4.0 * m) / n
 
+  // driver function for the simulation
   def simulate(): Unit = {
     val m = this.session()
     val r = this.results(m)

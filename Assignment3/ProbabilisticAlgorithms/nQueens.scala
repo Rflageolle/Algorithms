@@ -1,8 +1,19 @@
+/*
+  Author: Ryan Flageolle
+  Assignment: Solve the 8 queens problem by gluing k random queens to the board
+  and placing the other 8-k queens using backtracking. What value for k gives
+  the best result (on avereage)? How does the running time compare to the
+  traditional backtracking algorithm?
+*/
 import scala.util.Random
 
+/*
+
+*/
 class Board(n: Int) {
   var matrix = Array.ofDim[Boolean](this.n, this.n)
 
+  // debug and test function
   def printBoard(): Unit = {
     for ( row <- 0 to (this.n - 1) ) {
       var str = ""
@@ -26,10 +37,13 @@ class Board(n: Int) {
     this.matrix(row)(col) = false
   }
 
+  // Methods to determine if placing a queen is legal
   def onBoard(row: Int, col: Int): Boolean = {
     return (row >= 0 && row < this.n) && (col >= 0 && col < this.n)
   }
 
+  // I decided to attempt to make this a less costly operation by making it
+  // recursive. probes diagonly up and left
   def upAndLeft(row: Int, col: Int, legal: Boolean): Boolean = {
     if (onBoard(row - 1, col - 1) && legal) {
       return upAndLeft(row - 1, col - 1, !isOccupied(row - 1, col - 1))
@@ -38,6 +52,7 @@ class Board(n: Int) {
     }
   }
 
+  // probes diagonly down and left
   def downAndLeft(row: Int, col: Int, legal: Boolean): Boolean = {
     if (onBoard(row + 1, col - 1) && legal) {
       return downAndLeft(row + 1, col - 1, !isOccupied(row + 1, col - 1))
@@ -46,6 +61,7 @@ class Board(n: Int) {
     }
   }
 
+  //probes to the left
   def left(row: Int, col: Int, legal: Boolean): Boolean = {
     if (onBoard(row, col - 1) && legal) {
       return left(row, col - 1, !isOccupied(row, col - 1))
@@ -54,18 +70,30 @@ class Board(n: Int) {
     }
   }
 
+  // combines the above methods into one call
   def isLegalMove(row: Int, col: Int): Boolean = {
     return upAndLeft(row, col, true) && downAndLeft(row, col, true) && left(row, col, true)
   }
+
+  // end legal moves methods
 }
 
+/*
+
+*/
 class Solution(n: Int) {
   var b = new Board(this.n)
 
+  // to clear board between test calls
   def newBoard(): Unit = {
     this.b = new Board(this.n)
   }
 
+  // this method places a random queen in a provided column, it makes sure that
+  // the spot is safe before placing it, this caused issues in the last few
+  // columns which I fixed by using a counter to limit the number of attempts.
+  // if the number of attempts is less than 100000 it places the queen and
+  // returns true else it only returns false.
   def safeQueen(col: Int): Boolean = {
     var row = Random.nextInt(this.n)
     var attempts = 0
@@ -83,6 +111,8 @@ class Solution(n: Int) {
     }
   }
 
+  // runs safeQueen k times, if safeQueen returns false meaning a randomly
+  // generated queen is taking to long to place fixRandomPlacements takes over.
   def nQueens(k: Int): Unit = {
     var col = 0
     var placed = true
@@ -98,6 +128,7 @@ class Solution(n: Int) {
 
   }
 
+  // from the provided column, the standard backtracking algorithm kicks in
   def backtracking(col: Int): Boolean = {
     if (col == (this.n)) {
       return true
@@ -118,6 +149,8 @@ class Solution(n: Int) {
     return false
   }
 
+  // this uses backtracking to solve a board with completely randomly placed
+  // queens which if needed backtracks one row and calls backtracking again
   def fixRandomPlacements(col: Int): Unit = {
     if (!backtracking(col)) {
       for (row <- 0 to (this.n - 1)) {
@@ -130,18 +163,13 @@ class Solution(n: Int) {
 
   }
 
+  // adds a timer function
   def timer(k: Int): Long = {
     newBoard()
     val start = System.currentTimeMillis
     nQueens(k)
     val complete = backtracking(k)
     val time = System.currentTimeMillis - start
-
-    // if (complete) {
-    //   println(s"k = $k completed in $time milliseconds")
-    // } else {
-    //   println(s"k = $k completed with no solution found in $time milliseconds")
-    // }
 
     return time
   }
@@ -166,8 +194,7 @@ class Solution(n: Int) {
     println(s"After $trials trials: K = $bestK  completes the fastest in $fastest milliseconds")
   }
 
-
-
+  // driver function
   def simulation(k: Int, trials: Int): Unit = {
     var times = new Array[Long](trials)
 
@@ -184,7 +211,4 @@ class Solution(n: Int) {
 }
 
 val s = new Solution(8)
-// s.simulation(0, 10000)
-// s.simulation(1, 10000)
-// s.simulation(2, 10000)
 s.runSimulation(10)

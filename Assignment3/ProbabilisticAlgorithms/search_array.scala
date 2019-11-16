@@ -9,7 +9,9 @@
 import scala.util.Random
 import scala.util.control.Breaks._
 
+
 object ArraySearch{
+  // builds our array of 1000 random integers which range from 0 - 9999
   val array = Seq.fill( 1000 )( Random.nextInt(9999) ).toArray
 
   def pickRandomIndex(): Int = {
@@ -35,6 +37,8 @@ object ArraySearch{
       }
     }
 
+    // I wanted to be able to switch debugging on quickly or shut it off when I
+    // dont want it anymore
     if (debug) {
       if (found) {
         println(s"Random Search successfully found: $test in $count attempts.")
@@ -43,7 +47,7 @@ object ArraySearch{
       }
     }
 
-    count
+    count // scala is awesome, this is a return statement
   }
 
   def manyTrials(n: Int): Unit = {

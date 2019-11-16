@@ -8,7 +8,11 @@ import scala.util.Random
 import scala.math.{ pow, cos, sin, Pi, abs }
 
 
-
+/*
+  This method takes in a function (f) and start, stop, maxHeight, and trials which
+  are Integers. It throws trial(s) many darts and prints out the estimated
+  integral of f.
+*/
 def darts(f: (Double) => Double, start: Int, stop: Int, maxHeight: Int, trials: Int): Unit = {
   var in = 0
   for (_ <- 0 to trials) {
@@ -24,6 +28,11 @@ def darts(f: (Double) => Double, start: Int, stop: Int, maxHeight: Int, trials: 
 
 }
 
+/*
+  This method takes in a function (f) and start, stop, and trials which are
+  Integers. It sums up the values of trial(s) many randomly seleted locations,
+  using this value to print out the estimated integral value of f.
+*/
 def mean(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit = {
   var sum: Double = 0
   for (_ <- 0 to trials) {
@@ -35,6 +44,11 @@ def mean(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit = {
   println(s"Mean (after $trials trials):  The estimated integral of f(x) = $guess")
 }
 
+/*
+  This method takes in a function (f) and start, stop, and trials which are
+  Integers. It uses the trapezoid method to print out the estimated value of the
+  integral of f.
+*/
 def trapezoid(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit = {
   val h = (stop - start).toDouble / trials
   var s = (f(start) + f(stop))
@@ -49,6 +63,7 @@ def trapezoid(f: (Double) => Double, start: Int, stop: Int, trials: Int): Unit =
   println(s"Trapezoid (after $trials trials):  The estimated integral of f(x) = $guess")
 }
 
+// f(x) = cos(3πx) + 4sin(x) + 5
 val f = (x: Double) => abs(((cos(3 * Pi * x)) + (4 * (sin(x))))+5)
 
 darts(f, 0, 10, 10, 100000)

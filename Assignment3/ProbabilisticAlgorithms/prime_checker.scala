@@ -6,6 +6,10 @@
 import scala.util.Random
 import scala.util.control.Breaks._
 
+/*
+  this object is used to define and return different types of composite numbers
+  to be used to test our PrimeChecker algorithm against
+*/
 object Composite {
   def isEven = (x: Int) => x % 2 == 0
   def listDigits = (x: Int) => x.toString.map(_.asDigit).toList
@@ -19,10 +23,14 @@ object Composite {
   }
 }
 
+/*
+  This class contains the methods which can generate and test wheter a number is
+  prime
+*/
 class PrimeChecker {
   def isPrime(x: Int, l: List[Int]): Boolean = {
     var isP = true
-    breakable {
+    breakable { // this is how scala breaks out of loops
       l.foreach(n => {
         if (x % n == 0){
           isP = false
@@ -65,7 +73,7 @@ class PrimeChecker {
       println(s"The number: $n, is$pr prime.  Tested against $k numbers.")
     })
   }
-
+  
   def simOnComposites(): Unit = {
     val acc = List(10, 100, 1000, 10000, 100000)
     val randComps = randomComposites(25, 250000)
