@@ -149,8 +149,8 @@ class Solution(n: Int) {
     return false
   }
 
-  // this uses backtracking to solve a board with completely randomly placed
-  // queens which if needed backtracks one row and calls backtracking again
+  // this uses backtracking to solve a board with completely randomly unsafe
+  // placed queens which if needed backtracks one row and calls backtracking again
   def fixRandomPlacements(col: Int): Unit = {
     if (!backtracking(col)) {
       for (row <- 0 to (this.n - 1)) {
