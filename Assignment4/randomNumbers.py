@@ -6,53 +6,49 @@
 #
 #
 
-from randomized.primality import probablyPrime
-import random
+import random, sympy, re, sys
+from datetime import datetime as dt
+from math import gcd
+
 
 # My RNG is based off of the Blum Blum Shub algorithm
-def goodPrime(p):
-    return p % 4 == 3 and probablyPrime(p, accuracy=100)
+#          2
+# x    = x   mod M
+#  n+1     n
 
-def findGoodPrime(numBits=512):
-    candidate = 1
-    while not goodPrime(candidate):
-        candidate = random.getrandbits(numBits)
-    return candidate
+# where M = pq such that p and q are large primes
+i = 1
 
-def makeModulus():
-    return findGoodPrime() * findGoodPrime()
+def lcm(a, b):
+    return a * b / gcd(a, b)
 
-def parity(n):
-    return sum(int(x) for x in bin(n)[2:]) % 2
+def next_valid_prime(x):
+    p = sympy.nextprime(x)
+    while (p % 4 != 3):
+        p = sympy.nextprime(p)
+    return p
 
-class BlumBlumShub(object):
-    def __init__(self, seed=None):
-        self.modulus = makeModulus()
-        self.state = seed if seed is not None else random.randint(2, self.modulus - 1)
-        self.state = self.state % self.modulus
+class BBSRandom():
+    def __init__(self):
+        self.x = 3 * 10 ** 10
+        self.y = 4 * 10 ** 10
+        self.n = 1000
 
-    def seed(self, seed):
-        self.state = seed
+    def newSeed(self):
+        return dt.now().microsecond
 
-    def bitstream(self):
-        while True:
-            yield parity(self.state)
-            self.state = pow(self.state, 2, self.modulus)
+    def getInt(self):
+        p = next_valid_prime(self.x)
+        q = next_valid_prime(self.y)
+        m = p * q
 
-    def bits(self, n=20):
-        outputBits = ''
-        for bit in self.bitstream():
-            outputBits += str(bit)
-            if len(outputBits) == n:
-                break
+        bits = ""
+        x = self.newSeed()
+        print(x)
 
-        return outputBits
+        for _ in range(self.n):
+            x = x * x % m
+            b = x % 2
+            bits += str(b)
 
-generator = BlumBlumShub()
-
-hist = [0] * 2**6
-for i in range(10000):
-    value = int(generator.bits(6), 2)
-    hist[value] += 1
-
-print(hist)
+        print(bits[0:20])
