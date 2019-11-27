@@ -1,3 +1,7 @@
+# Assignment 4: Random Numbers
+# Author: Ryan Flageolle
+# Description: Analyse 2 random number generators, one hand written and on from
+#              a library
 
 from randomNumbers import BBSRandom
 from math import sqrt, erfc
@@ -43,13 +47,14 @@ def frequency(r, alpha=0.01):
 
     return hyp
 
-
+# checks if next in list is the same
 def checknextinsequence(r, i):
     if i < len(r) - 1:
         if r[i] == r[i + 1]:
             return True
     return False
 
+# builds single sequence of similar bits
 def getsequence(r, i, seq):
     seq.append(r[i])
     if checknextinsequence(r, i):
@@ -57,6 +62,7 @@ def getsequence(r, i, seq):
     else:
         return (seq, i + 1)
 
+# recursively pulls out a list of all sequences (runs) from r
 def countruns(r, alpha=0.01):
     """Runs test is used to determine if a piece of data is from a random set.
 
@@ -107,6 +113,7 @@ def countruns(r, alpha=0.01):
 
     else: return False
 
+# Simple timing function of my algorithm
 def testMine(x):
     start = time.process_time()
     mine = [rand.getInt() for _ in range(x)]
@@ -114,6 +121,7 @@ def testMine(x):
 
     return (mine , (stop - start))
 
+# Simple timing function of built in python
 def testPyth(x):
     start = time.process_time()
     pyth = [random.randint(0, 1024) for _ in range(x)]
@@ -121,9 +129,13 @@ def testPyth(x):
 
     return (pyth, (stop - start))
 
+# Full tesing suite, incoorporating
 def runTests(x):
     mine, mtime = testMine(x)
     pyth, ptime = testPyth(x)
+
+    plotTests(mine, 'blue', 800)
+    plotTests(pyth, 'red', 800)
 
     mean_mine = np.mean(mine)
     mean_pyth = np.mean(pyth)
@@ -163,10 +175,10 @@ def runTests(x):
     print("My algorithm passes the runs test:", runs_percent_mine)
     print("Built in python algorithm passes the runs test:", runs_percent_pyth)
 
-    print("My algorithm takes %s seconds per number" % (mtime / x))
-    print("Built in python algorithm takes %s seconds per number" % (ptime / x))
+    print("My algorithm takes %s seconds " % mtime)
+    print("Built in python algorithm takes %s seconds" % ptime)
 
-
+# optional plotting
 def plotTests(name, color,  bins):
     plt.hist(name, color=color, edgecolor = 'black', bins=bins)
     plt.title('Random Numbers')
@@ -174,7 +186,7 @@ def plotTests(name, color,  bins):
     plt.ylabel('Frequency')
     plt.show()
 
-runTests(500000)
+runTests(100000)
 # m = testMine()
 # p = testPyth()
 #
