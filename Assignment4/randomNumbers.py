@@ -6,18 +6,16 @@
 #
 #
 
-import random, sympy, re, sys
+import random, sympy
 from datetime import datetime as dt
 from math import gcd
 
-# My RNG is based off of the Blum Blum Shub algorithm
-#          2
-# x    = x   mod M
-#  n+1     n
 
-# where M = pq such that p and q are large primes
 def lcm(a, b):
     return a * b / gcd(a, b)
+
+def getPrime(x):
+    return sympy.nextprime(x)
 
 def next_valid_prime(x):
     p = sympy.nextprime(x)
@@ -25,33 +23,33 @@ def next_valid_prime(x):
         p = sympy.nextprime(p)
     return p
 
+def newSeed():
+    return dt.now().microsecond
+
 class BBSRandom():
     def __init__(self):
-        self.x = 3 * 10 ** 10
-        self.y = 4 * 10 ** 10
+        self.x = getPrime(3 * 10 ** 10)
+        self.y = next_valid_prime(4 * 10 ** 10)
         self.n = 1000
-
-    def newSeed(self):
-        return dt.now().microsecond
+        self.seed = newSeed()
 
     def getInt(self, n=10):
-        p = next_valid_prime(self.x)
+        return int(self.getBin(n)[:n], 2)
+
+    def getBin(self, n=10):
+        p = getPrime(self.x)
         q = next_valid_prime(self.y)
         m = p * q
 
         bits = ""
-        x = self.newSeed()
+        x = self.seed
 
         for _ in range(self.n):
             x = x * x % m
             b = x % 2
             bits += str(b)
 
-        return int(bits[:n], 2)
-
-
-rand = BBSRandom()
-
-for _ in range(100):
-    print(rand.getInt())
-    print(random.rand())
+        self.seed = x % q
+        self.x = q
+        self.y = p
+        return bits[:n]
