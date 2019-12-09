@@ -1,0 +1,76 @@
+recurrence function -> O(N) = some function
+base function -> 0(1) = 1
+
+both of these together there is a recurrence relationship
+
+with these we can:
+
+  expand -> plug one thing into itself until a pattern appears
+  contraction -> represent the function in a templated version of the function
+                  templated = some constant thing times a function
+  the function part of the contraction will almost always consist of 2 variables
+  i.e. K and N. From this we will be able to cancel out in such a way that the
+  final part will equal the input of the base case.
+
+he will give us problems he hasn't shown us before and will ask us
+
+combinations - given a set a choice of any number of items in that set, order does
+                not matter
+
+{A, B, C} - {A, B}, {B, C}
+
+Combinations:
+  problem size (n - 1) and extending the problem to a problem size n
+
+  {A, B, C, D}
+
+  All combinations of size 4 ->
+
+  All combinations of size 3, extended to problem size of 4 ->
+
+  All combinations of size 2, extended to problem size of 3 ->
+
+  N    |    0
+  -----------
+  1    |    1
+  2    |    4
+  3    |    8
+  4    |   16
+  5    |   32
+  6    |   64
+
+Step 1: expand
+
+  O(1) = 2
+  O(N) = 2 * O(N) - 1
+
+  1: O(N - 1) = 2 * O(N - 1)
+              = 2 * (2 * O(N - 1)) = 4 * O(N - 1)
+
+  2: O(N - 2) = 4 * O(N - 1)
+              = 4 * (2 * O(N - 2)) = 8 * O(N - 1)
+
+  3: O(N - 3) = 8 * O(N - 1)
+              = 8 * (2 * O(N - 3)) = 16 * O(N - 1)
+
+Step 2: contract
+-> O(N) = 2^K * (N - K)
+
+Step 3: solution
+
+  we need to find a way to cancel out k and n.
+  O(N - K) = O(1)  also (N - K) = 1
+
+  (N - K) = 1
+  O(N) = 2^(N-1) * O(1)
+       = 2^(N-1) * 2
+
+  O(N) = 2^N
+
+""""BASE CASE ENTITY EQUATION""""
+
+  - O(N) = 2 * O(N / 2) + 1
+    0(1) = 1
+
+  1: O(N - 1) = 2 * O((N / 2) / 2) + 1) + 1
+              = 2 * O((N / 4) + 2)
